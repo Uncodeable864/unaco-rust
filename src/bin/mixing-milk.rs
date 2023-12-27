@@ -1,51 +1,56 @@
 /** https://www.usaco.org/index.php?page=viewproblem2&cpid=855 */
 
 fn main() {
-    let mut vec = vec![
-        Bucket {
-            capacity: 10,
-            milk: 3,
-        },
-        Bucket {
-            capacity: 11,
-            milk: 4,
-        },
-        Bucket {
-            capacity: 12,
-            milk: 5,
-        },
-    ];
+    let main_bucket = create_bucket(5, 10);
+    let into_bucket = create_bucket(3, 12);
+
+    let bucket_list = [main_bucket, into_bucket];
+
+    print_buckets(swap_bucket(&bucket_list, 0, 1));
 }
 
-fn swap_bucket(list: &mut [Bucket], from: usize, to: usize) -> Bucket {
-    let from_bucket = &mut list[from];
+fn swap_bucket(list: &[Bucket], from: usize, to: usize) -> (Bucket, Bucket) {
     let to_bucket = &list[to];
+    let from_bucket = &list[from];
 
-    let mut new_bucket: Bucket = Bucket {
-        capacity: 0,
-        milk: 0,
+    let new_from_bucket: Bucket = Bucket {
+        capacity: from_bucket.capacity,
+        milk: (to_bucket.milk - from_bucket.capacity).clamp(0, 100),
     };
 
-    if !(from_bucket.capacity == from_bucket.milk) && !(to_bucket.capacity == to_bucket.milk) {
-        // Calculate remaing capacity of bucket
-        new_bucket.milk += from_bucket.milk + to_bucket.milk;
-        new_bucket.capacity = from_bucket.milk;
-
-        from_bucket.capacity = 0;
-
-        if new_bucket.milk > new_bucket.capacity {
-            let change_amount = new_bucket.milk - new_bucket.capacity;
-            from_bucket.capacity = change_amount;
-        }
-        return new_bucket;
-    }
-    return Bucket {
-        capacity: 0,
-        milk: (0),
+    let new_to_bucket: Bucket = Bucket {
+        capacity: to_bucket.capacity,
+        milk: (from_bucket.milk + to_bucket.milk).clamp(0, to_bucket.capacity),
     };
+
+    return (new_from_bucket, new_to_bucket)
 }
 
 struct Bucket {
-    capacity: usize,
-    milk: usize,
+    capacity: i8,
+    milk: i8,
+}
+
+fn print_buckets(buckets: (Bucket, Bucket)) {
+    println!("First bucket:");
+    println!("  Capacity: {}", buckets.0.capacity);
+    println!("  Milk: {}", buckets.0.milk);
+    
+    println!("Second bucket:");
+    println!("  Capacity: {}", buckets.1.capacity);
+    println!("  Milk: {}", buckets.1.milk);
+}
+
+fn empty_bucket() -> Bucket {
+    Bucket {
+        capacity: 0,
+        milk: 0
+    }
+}
+
+fn create_bucket(milk: i8, capacity: i8) -> Bucket {
+    Bucket {
+        milk: milk,
+        capacity: capacity
+    }
 }
