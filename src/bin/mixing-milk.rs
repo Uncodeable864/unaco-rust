@@ -1,21 +1,23 @@
-/** https://www.usaco.org/index.php?page=viewproblem2&cpid=855 */
+/** https://www.usaco.org/index.php?page=viewproblem2&cpid=855
+ * This (likley wrong) solution was written Uncodeable864 during December 2023
+ */
 
 fn main() {
-    let main_bucket = create_bucket(5, 10);
-    let into_bucket = create_bucket(3, 12);
 
-    let bucket_list = [main_bucket, into_bucket];
+    // Create a set of 3 buckets
+    let mut bucket_list: Vec<Bucket> = vec![create_bucket(2, 10), create_bucket(5, 7), create_bucket(4, 15)];
 
-    print_buckets(swap_bucket(&bucket_list, 0, 1));
 }
 
 fn swap_bucket(list: &[Bucket], from: usize, to: usize) -> (Bucket, Bucket) {
     let to_bucket = &list[to];
     let from_bucket = &list[from];
 
-    let new_from_bucket: Bucket = Bucket {
+    let surplus = (to_bucket.milk + from_bucket.milk) - to_bucket.capacity;
+
+    let new_from_bucket = Bucket {
         capacity: from_bucket.capacity,
-        milk: (to_bucket.milk - from_bucket.capacity).clamp(0, 100),
+        milk: if surplus < 0 {0} else {surplus},
     };
 
     let new_to_bucket: Bucket = Bucket {
@@ -23,19 +25,19 @@ fn swap_bucket(list: &[Bucket], from: usize, to: usize) -> (Bucket, Bucket) {
         milk: (from_bucket.milk + to_bucket.milk).clamp(0, to_bucket.capacity),
     };
 
-    return (new_from_bucket, new_to_bucket)
+    return (new_from_bucket, new_to_bucket);
 }
 
 struct Bucket {
-    capacity: i8,
-    milk: i8,
+    capacity: i32,
+    milk: i32,
 }
 
 fn print_buckets(buckets: (Bucket, Bucket)) {
     println!("First bucket:");
     println!("  Capacity: {}", buckets.0.capacity);
     println!("  Milk: {}", buckets.0.milk);
-    
+
     println!("Second bucket:");
     println!("  Capacity: {}", buckets.1.capacity);
     println!("  Milk: {}", buckets.1.milk);
@@ -44,13 +46,13 @@ fn print_buckets(buckets: (Bucket, Bucket)) {
 fn empty_bucket() -> Bucket {
     Bucket {
         capacity: 0,
-        milk: 0
+        milk: 0,
     }
 }
 
-fn create_bucket(milk: i8, capacity: i8) -> Bucket {
+fn create_bucket(milk: i32, capacity: i32) -> Bucket {
     Bucket {
         milk: milk,
-        capacity: capacity
+        capacity: capacity,
     }
 }
