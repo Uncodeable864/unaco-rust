@@ -3,10 +3,21 @@
  */
 
 fn main() {
-
-    // Create a set of 3 buckets
-    let mut bucket_list: Vec<Bucket> = vec![create_bucket(2, 10), create_bucket(5, 7), create_bucket(4, 15)];
-
+    /*
+     * In reality, we shold be getting and pushing to and from the input an output files
+     * but that is irrelavant b/c this solution will never actually get run
+     */
+    let mut bucket_list: Vec<Bucket> = vec![
+        create_bucket(2, 10),
+        create_bucket(5, 7),
+        create_bucket(4, 15),
+    ];
+    let mut selector = 0;
+    for i in 0..101 {
+        (bucket_list[selector], bucket_list[selector + 1]) =
+            swap_bucket(&bucket_list, selector, selector + 1);
+        selector = increment_alpha(selector);
+    }
 }
 
 fn swap_bucket(list: &[Bucket], from: usize, to: usize) -> (Bucket, Bucket) {
@@ -17,7 +28,7 @@ fn swap_bucket(list: &[Bucket], from: usize, to: usize) -> (Bucket, Bucket) {
 
     let new_from_bucket = Bucket {
         capacity: from_bucket.capacity,
-        milk: if surplus < 0 {0} else {surplus},
+        milk: if surplus < 0 { 0 } else { surplus },
     };
 
     let new_to_bucket: Bucket = Bucket {
@@ -55,4 +66,11 @@ fn create_bucket(milk: i32, capacity: i32) -> Bucket {
         milk: milk,
         capacity: capacity,
     }
+}
+
+fn increment_alpha(alpha: usize) -> usize {
+    if alpha == 2 {
+        return 0;
+    };
+    return alpha + 1;
 }
