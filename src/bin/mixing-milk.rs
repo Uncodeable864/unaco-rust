@@ -1,5 +1,7 @@
-/** https://www.usaco.org/index.php?page=viewproblem2&cpid=855
+/** Original Challange: https://www.usaco.org/index.php?page=viewproblem2&cpid=855
+ * A Simulation Challange <https://usaco.guide/bronze/simulation>
  * This (likley wrong) solution was written Uncodeable864 during December 2023
+ * This code was verified using the samples provided by Brain Dean, the creator of the problem
  */
 
 fn main() {
@@ -8,16 +10,27 @@ fn main() {
      * but that is irrelavant b/c this solution will never actually get run
      */
     let mut bucket_list: Vec<Bucket> = vec![
-        create_bucket(2, 10),
-        create_bucket(5, 7),
-        create_bucket(4, 15),
+        create_bucket(3, 10),
+        create_bucket(4, 11),
+        create_bucket(5, 12),
     ];
     let mut selector = 0;
-    for i in 0..101 {
-        (bucket_list[selector], bucket_list[selector + 1]) =
-            swap_bucket(&bucket_list, selector, selector + 1);
-        selector = increment_alpha(selector);
+
+    print_buckets(&bucket_list);
+
+    for _i in 0..100 {
+        let secondary_selector = cyclic_function(selector);
+        (bucket_list[selector], bucket_list[secondary_selector]) =
+            swap_bucket(&bucket_list, selector, secondary_selector);
+        println!(
+            "buckets for no. {}, pour {} into {}",
+            _i, selector, secondary_selector
+        );
+        print_buckets(&bucket_list);
+        selector = cyclic_function(selector);
     }
+    println!("final");
+    print_buckets(&bucket_list);
 }
 
 fn swap_bucket(list: &[Bucket], from: usize, to: usize) -> (Bucket, Bucket) {
@@ -44,23 +57,6 @@ struct Bucket {
     milk: i32,
 }
 
-fn print_buckets(buckets: (Bucket, Bucket)) {
-    println!("First bucket:");
-    println!("  Capacity: {}", buckets.0.capacity);
-    println!("  Milk: {}", buckets.0.milk);
-
-    println!("Second bucket:");
-    println!("  Capacity: {}", buckets.1.capacity);
-    println!("  Milk: {}", buckets.1.milk);
-}
-
-fn empty_bucket() -> Bucket {
-    Bucket {
-        capacity: 0,
-        milk: 0,
-    }
-}
-
 fn create_bucket(milk: i32, capacity: i32) -> Bucket {
     Bucket {
         milk: milk,
@@ -68,9 +64,18 @@ fn create_bucket(milk: i32, capacity: i32) -> Bucket {
     }
 }
 
-fn increment_alpha(alpha: usize) -> usize {
+fn cyclic_function(alpha: usize) -> usize {
     if alpha == 2 {
         return 0;
     };
     return alpha + 1;
+}
+
+fn print_buckets(buckets: &Vec<Bucket>) {
+    for (index, bucket) in buckets.iter().enumerate() {
+        println!(
+            "Bucket {}: Milk = {}, Capacity = {}",
+            index, bucket.milk, bucket.capacity
+        );
+    }
 }
