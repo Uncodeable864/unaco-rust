@@ -2,6 +2,7 @@
  * A Simulation Challange <https://usaco.guide/bronze/simulation>
  * This (likley wrong) solution was written Uncodeable864 during December 2023
  * This code was verified using the samples provided by Brain Dean, the creator of the problem
+ * Code run time: ~600.00µs
  */
 
 fn main() {
@@ -9,6 +10,10 @@ fn main() {
      * In reality, we shold be getting and pushing to and from the input an output files
      * but that is irrelavant b/c this solution will never actually get run
      */
+
+    use std::time::Instant; // Benchmarking solution curtosy of @ideasman42 on ST
+    let now = Instant::now();
+
     let mut bucket_list: Vec<Bucket> = vec![
         create_bucket(3, 10),
         create_bucket(4, 11),
@@ -31,6 +36,9 @@ fn main() {
     }
     println!("final");
     print_buckets(&bucket_list);
+
+    let elapsed = now.elapsed();
+    println!("Elapsed: {:.2?}", elapsed);
 }
 
 fn swap_bucket(list: &[Bucket], from: usize, to: usize) -> (Bucket, Bucket) {
