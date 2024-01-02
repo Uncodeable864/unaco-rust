@@ -11,7 +11,7 @@ fn main() {
      * but that is irrelavant b/c this solution will never actually get run
      */
 
-    use std::time::Instant; // Benchmarking solution curtosy of @ideasman42 on ST
+    use std::time::Instant; // Benchmarking solution curtosy of @ideasman42 on SO
     let now = Instant::now();
 
     let mut bucket_list: Vec<Bucket> = vec![
