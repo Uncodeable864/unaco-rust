@@ -4,8 +4,17 @@
  *
  * Created by Uncodeable864, Jan 1 2024
  * to run: cargo run --bin block-game
+ *
+ * Code run time: ~1.7ms
  */
+
+use regex::Regex;
+use std::char; // The USACO languages all have regex, so I amm using a crate for it hear
+
 fn main() {
+    use std::time::Instant; // Benchmarking solution curtosy of @ideasman42 on SO
+    let now = Instant::now();
+
     /*
     As with all solutions here, I am using stdout to print the result, and additionally using variables to
     initilaize the paramaters based off of `blocks.in.` The code is written is such a way so that it would
@@ -21,13 +30,46 @@ fn main() {
         Board::create_board("car", "bus"),
     ];
 
-    let combinations = calculate_permutations(&board_list, board_permutations as usize);
+    let combinations: Vec<String> =
+        calculate_permutations(&board_list, board_permutations as usize);
 
-    for z in combinations {
+    for z in &combinations {
         println!("{}", z);
     }
 
+    let (regex_array, alphabet) = create_alphabet_regex();
+
+    let mut count_array: [usize; 26] = [0; 26];
+
     // go through all letters; find max per letter in all; save and return;
+    for (_, permutation) in combinations.iter().enumerate() {
+        for (letter_id, _) in alphabet.iter().enumerate() {
+            let appearance_count = regex_array
+                .get(letter_id)
+                .unwrap()
+                .find_iter(&permutation)
+                .count();
+            if count_array[letter_id] < appearance_count {
+                count_array[letter_id] = appearance_count;
+            }
+        }
+    }
+
+    print_array(&count_array);
+
+    let elapsed = now.elapsed();
+    println!("Elapsed: {:.2?}", elapsed);
+}
+
+fn create_alphabet_regex() -> (Vec<Regex>, Vec<char>) {
+    let alphabet: Vec<char> = "abcdefghijklmnopqrstuvwxyz".chars().collect();
+    (
+        alphabet
+            .iter()
+            .map(|&c| Regex::new(&format!("{}", c)).unwrap())
+            .collect(),
+        alphabet,
+    )
 }
 
 fn calculate_permutations(list: &[Board], board_permutations: usize) -> Vec<String> {
@@ -42,6 +84,7 @@ fn calculate_permutations(list: &[Board], board_permutations: usize) -> Vec<Stri
             .map(|n| (i as i8 >> n) & 1)
             .into_iter()
             .enumerate()
+        // Iterator courtesy for @Jmb on SO (https://stackoverflow.com/a/74163801)
         {
             if n == 1 {
                 combination = [combination, list[j].front.to_string()].join(" ");
@@ -69,5 +112,11 @@ impl Board {
             front: f.to_string(),
             back: b.to_string(),
         }
+    }
+}
+
+fn print_array(arr: &[usize]) {
+    for (index, num) in arr.iter().enumerate() {
+        println!("array[{}] = {}", index, num);
     }
 }
