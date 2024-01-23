@@ -5,7 +5,9 @@
  * Created by Uncodeable864, Jan 7 2024
  * to run: cargo run --bin maximum-distance
  *
- * Example run time: ~32.5µs
+ * Example run time: ~59.1µs (average of 5), ~45.6µs (excluding outlier)
+ *
+ * O: O(n!)
  */
 
 fn main() {
